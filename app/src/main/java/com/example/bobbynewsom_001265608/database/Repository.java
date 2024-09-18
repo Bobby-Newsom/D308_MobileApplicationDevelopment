@@ -39,4 +39,60 @@ public class Repository {
         return mAllVacations;
     }
 
+    public List<Excursion> getAllExcursions() {
+        databaseExecutor.execute(() -> {
+            mAllExcursions = (List<Excursion>) mExcursionDAO.getAllExcursions();
+        });
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }return mAllExcursions;
+    }
+
+    public void insert(Vacation vacation) {
+        databaseExecutor.execute(() -> {
+            mVacationDAO.insert(vacation);
+        });
+    }
+
+    public void update(Vacation vacation) {
+        databaseExecutor.execute(() -> {
+            mVacationDAO.update(vacation);
+        });
+    }
+
+    public void delete(Vacation vacation) {
+        databaseExecutor.execute(() -> {
+            mVacationDAO.delete(vacation);
+        });
+    }
+
+    public void insert(Excursion excursion) {
+        databaseExecutor.execute(() -> {
+            mExcursionDAO.insert(excursion);
+        });
+    }
+
+    public void update(Excursion excursion) {
+        databaseExecutor.execute(() -> {
+            mExcursionDAO.update(excursion);
+        });
+    }
+
+    public void delete(Excursion excursion) {
+        databaseExecutor.execute(() -> {
+            mExcursionDAO.delete(excursion);
+        });
+    }
+
+    public Vacation getVacationById(int vacationId) {
+        List<Vacation> allVacations = getAllVacations();
+        for (Vacation vacation : allVacations) {
+            if (vacation.getVacationId() == vacationId) {
+                return vacation;
+            }
+        }
+        return null;
+    }
 }
