@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">BobbyNewsom_001265608</string>
+    <string name="save_vacation">Save Vacation</string>
+    <string name="delete_vacation">Delete Vacation</string>
+    <string name="share_vacation">Share Vacation</string>
+    <string name="vacation_end_alert">Vacation End Alert\n</string>
+    <string name="vacation_start_alert">Vacation Start Alert</string>
+    <string name="save_excursion">Save Excursion</string>
+    <string name="delete_excursion">Delete Excursion</string>
+    <string name="share_excursion">Share Excursion</string>
 </resources>
