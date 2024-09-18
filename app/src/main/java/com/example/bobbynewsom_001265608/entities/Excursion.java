@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "excursion_table")
 public class Excursion {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int excursionId;
 
     @ColumnInfo(name = "excursion_title")
     private String title;
@@ -18,19 +18,19 @@ public class Excursion {
     @ColumnInfo(name = "vacation_id")
     private int vacationId;
 
-    public Excursion(int id, String title, String date, int vacationId) {
-        this.id = id;
+    public Excursion(int excursionId, String title, String date, int vacationId) {
+        this.excursionId = excursionId;
         this.title = title;
         this.date = date;
         this.vacationId = vacationId;
     }
 
-    public int getId() {
-        return id;
+    public int getExcursionId() {
+        return excursionId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setExcursionId(int excursionId) {
+        this.excursionId = excursionId;
     }
 
     public String getTitle() {
