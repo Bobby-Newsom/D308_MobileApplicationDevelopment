@@ -47,8 +47,8 @@ public class VacationList extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Fetch and display vacations
-        List<Vacation> vacations = repository.getAllVacations();
-        adapter = new VacationAdapter(vacations);
+        List<Vacation> vacations = repository.getmAllVacations();
+        adapter = new VacationAdapter();
         recyclerView.setAdapter(adapter);
     }
 }

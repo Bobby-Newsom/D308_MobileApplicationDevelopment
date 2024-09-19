@@ -25,6 +25,6 @@ public interface VacationDAO {
     void delete(Vacation vacation);
 
     @Query("SELECT * FROM vacation_table")
-    LiveData<List<Vacation>> getAllVacations();
+    List<Vacation> getAllVacations();
 
 }

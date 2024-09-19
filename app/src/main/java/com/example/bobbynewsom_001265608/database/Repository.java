@@ -27,15 +27,17 @@ public class Repository {
         mExcursionDAO = db.excursionDAO();
     }
 
-    public List<Vacation> getAllVacations() {
+    public List<Vacation> getmAllVacations() {
         databaseExecutor.execute(() -> {
-            mAllVacations = (List<Vacation>) mVacationDAO.getAllVacations();
+            mAllVacations = mVacationDAO.getAllVacations();
         });
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         return mAllVacations;
     }
 
@@ -128,7 +130,7 @@ public class Repository {
     }
 
     public Vacation getVacationById(int vacationId) {
-        List<Vacation> allVacations = getAllVacations();
+        List<Vacation> allVacations = getmAllVacations();
         for (Vacation vacation : allVacations) {
             if (vacation.getVacationId() == vacationId) {
                 return vacation;
@@ -136,4 +138,6 @@ public class Repository {
         }
         return null;
     }
+
+
 }
