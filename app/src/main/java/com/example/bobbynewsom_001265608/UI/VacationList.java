@@ -33,6 +33,8 @@ public class VacationList extends AppCompatActivity {
             startActivity(intent);
         });
 
+        RecyclerView recyclerView = findViewById(R.id.vacationListRecyclerView);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addVacationButton), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -42,13 +44,21 @@ public class VacationList extends AppCompatActivity {
         // Initialize the repository
         repository = new Repository(getApplication());
 
+        // Fetch and display vacations
+        List<Vacation> vacations = repository.getmAllVacations();
+
+        final VacationAdapter adapter = new VacationAdapter(this);
+        recyclerView.setAdapter(adapter);
+        adapter.setVacations(vacations);
+
         // Set up RecyclerView
         recyclerView = findViewById(R.id.vacationListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
-        // Fetch and display vacations
-        List<Vacation> vacations = repository.getmAllVacations();
-        adapter = new VacationAdapter();
-        recyclerView.setAdapter(adapter);
+    public void insertTestData(){
+        Repository repository = new Repository(getApplication());
+
+        Vacation vacation1 = new Vacation( 0,"Bermuda Trip", "2024-10-15", "2024-10-10", "Ocean View Resort");
     }
 }
