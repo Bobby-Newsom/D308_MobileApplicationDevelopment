@@ -1,6 +1,7 @@
 package com.example.bobbynewsom_001265608.UI;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.view.View;
@@ -24,6 +25,12 @@ public class VacationDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vacation_details);
+
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("title");
+        String accommodation = intent.getStringExtra("accommodation");
+        String startDate = intent.getStringExtra("startDate");
+        String endDate = intent.getStringExtra("endDate");
 
         // Initializing EditTexts
         startDateEditText = findViewById(R.id.editTextStartDate);

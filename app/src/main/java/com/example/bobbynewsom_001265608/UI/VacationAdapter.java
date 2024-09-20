@@ -29,21 +29,19 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
         public VacationViewHolder(@NonNull View itemView) {
             super(itemView);
             vacationItemView = itemView.findViewById(R.id.textViewVacationListItem);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                        int position = getAdapterPosition();
-                        final Vacation current = mVacations.get(position);
-                        Intent intent = new Intent(context, VacationDetails.class);
-
-                        intent.putExtra("vacationId", current.getVacationId());
-                        intent.putExtra("title", current.getTitle());
-                        intent.putExtra("accommodation", current.getAccommodation());
-                        intent.putExtra("startDate", current.getStartDate());
-                        intent.putExtra("endDate", current.getEndDate());
-                        context.startActivity(intent);
+            itemView.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Vacation current = mVacations.get(position);
+                    Intent intent = new Intent(context, VacationDetails.class);
+                    intent.putExtra("vacationId", current.getVacationId());
+                    intent.putExtra("title", current.getTitle());
+                    intent.putExtra("accommodation", current.getAccommodation());
+                    intent.putExtra("startDate", current.getStartDate());
+                    intent.putExtra("endDate", current.getEndDate());
+                    context.startActivity(intent);
                 }
-            } );
+            });
 
 
         }

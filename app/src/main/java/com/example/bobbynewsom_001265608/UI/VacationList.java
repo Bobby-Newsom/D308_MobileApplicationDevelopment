@@ -26,39 +26,32 @@ public class VacationList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_vacation_list);
-        FloatingActionButton fab = findViewById(R.id.backToMainActivityButton);
 
+        FloatingActionButton fab = findViewById(R.id.backToMainActivityButton);
         fab.setOnClickListener(view -> {
             Intent intent = new Intent(VacationList.this, MainActivity.class);
             startActivity(intent);
         });
 
-        RecyclerView recyclerView = findViewById(R.id.vacationListRecyclerView);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addVacationButton), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        recyclerView = findViewById(R.id.vacationListRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new VacationAdapter(this);
+        recyclerView.setAdapter(adapter);
 
         // Initialize the repository
         repository = new Repository(getApplication());
 
+        // Optionally check and insert test data
+        insertTestData(); // This ensures test data is loaded
+
         // Fetch and display vacations
         List<Vacation> vacations = repository.getmAllVacations();
-
-        final VacationAdapter adapter = new VacationAdapter(this);
-        recyclerView.setAdapter(adapter);
         adapter.setVacations(vacations);
-
-        // Set up RecyclerView
-        recyclerView = findViewById(R.id.vacationListRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     public void insertTestData(){
         Repository repository = new Repository(getApplication());
-
-        Vacation vacation1 = new Vacation( 0,"Bermuda Trip", "2024-10-15", "2024-10-10", "Ocean View Resort");
+        Vacation vacation1 = new Vacation(0, "Bermuda Trip", "2024-10-15", "2024-10-20", "Ocean View Resort");
+        repository.insert(vacation1); // Make sure this method actually persists the data
     }
 }

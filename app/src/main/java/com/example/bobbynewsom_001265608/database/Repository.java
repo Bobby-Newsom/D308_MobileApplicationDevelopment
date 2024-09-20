@@ -18,7 +18,7 @@ public class Repository {
     private List<Vacation> mAllVacations;
     private List<Excursion> mAllExcursions;
 
-    private static int NUMBER_OF_THREADS = 4;
+    private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS); //Executors can open threads
 
     public Repository(Application application) {
