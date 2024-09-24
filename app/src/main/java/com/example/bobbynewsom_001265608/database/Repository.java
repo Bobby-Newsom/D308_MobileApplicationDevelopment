@@ -140,4 +140,22 @@ public class Repository {
     }
 
 
+    public void deleteVacationById(int vacationId) {
+        databaseExecutor.execute(() -> {
+            mVacationDAO.deleteVacationById(vacationId);
+        });
+        try {
+            Thread.sleep(1000); // Optional, can wait for the task to complete
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean hasExcursions(int vacationId) {
+        return mExcursionDAO.countExcursionsByVacationId(vacationId) > 0;
+    }
+
+    public int countExcursionsByVacationId(int vacationId) {
+        return mExcursionDAO.countExcursionsByVacationId(vacationId);
+    }
 }

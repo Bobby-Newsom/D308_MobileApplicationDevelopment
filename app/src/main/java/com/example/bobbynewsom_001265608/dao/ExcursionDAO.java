@@ -31,4 +31,6 @@ public interface ExcursionDAO {
     @Query("SELECT * FROM excursion_table WHERE vacation_id=:vacationId ORDER BY excursion_date ASC")
     List<Excursion> getAssociatedExcursions(int vacationId);
 
+    @Query("SELECT COUNT(*) FROM excursion_table WHERE vacation_id = :vacationId")
+    int countExcursionsByVacationId(int vacationId);
 }

@@ -8,7 +8,6 @@
     tools:context=".UI.VacationDetails">
 
 
-
     <TextView
         android:id="@+id/textViewVacationTitleLabel"
         android:layout_width="wrap_content"
@@ -50,9 +49,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextVacationTitle" />
 
-    <!-- Start Date Input -->
-
-    <!-- End Date Label -->
 
     <EditText
         android:id="@+id/editTextAccommodation"
@@ -67,20 +63,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewAccommodationLabel" />
 
-    <!-- End Date Input -->
-
-
 
     <TextView
         android:id="@+id/textViewStartDateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/editTextAccommodation"
         android:layout_marginStart="168dp"
         android:text="Start Date"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextAccommodation"
         tools:layout_editor_absoluteY="189dp" />
 
     <EditText
@@ -133,7 +126,7 @@
         android:layout_marginTop="56dp"
         android:text="Save Vacation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/editTextEndDate" />
 
@@ -141,9 +134,24 @@
         android:id="@+id/excursionRecyclerView"
         android:layout_width="409dp"
         android:layout_height="324dp"
-        app:layout_constraintTop_toBottomOf="@id/saveButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/saveButton" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="168dp"
+        android:layout_marginBottom="7dp"
+        android:text="Delete"
+        app:layout_constraintBottom_toTopOf="@+id/excursionRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.844"
+        app:layout_constraintRight_toRightOf="@id/saveButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextAccommodation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
