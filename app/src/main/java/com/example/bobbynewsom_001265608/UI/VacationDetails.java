@@ -19,7 +19,10 @@ import com.example.bobbynewsom_001265608.R;
 import com.example.bobbynewsom_001265608.database.Repository;
 import com.example.bobbynewsom_001265608.entities.Vacation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -34,9 +37,10 @@ public class VacationDetails extends AppCompatActivity {
 
     private Repository repository;
     private boolean isEditMode = false;
-    private int vacationId = -1; // Track if we are editing an existing vacation
+    private int vacationId = -1; // Track if editing an existing vacation
 
     private final Executor executor = Executors.newSingleThreadExecutor(); // Executor for background tasks
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy"); // Ensure consistent date format
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,29 +165,58 @@ public class VacationDetails extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    // Save a new vacation
+    // Save a new vacation with date validation
     private void saveNewVacation() {
         String title = titleEditText.getText().toString();
         String accommodation = accommodationEditText.getText().toString();
         String startDate = startDateEditText.getText().toString();
         String endDate = endDateEditText.getText().toString();
 
+        // Validate the dates
+        if (!isDateValid(startDate, endDate)) {
+            Toast.makeText(this, "Start date cannot be after the end date", Toast.LENGTH_SHORT).show();
+            return; // Stop execution if validation fails
+        }
+
+        // Create new Vacation entity
         Vacation newVacation = new Vacation(0, title, startDate, endDate, accommodation);
 
+        // Insert into database
         repository.insert(newVacation);
-        finish();  // Go back to the vacation list
+        finish(); // Go back to the vacation list
     }
 
-    // Update an existing vacation
+    // Update an existing vacation with date validation
     private void updateVacation() {
         String title = titleEditText.getText().toString();
         String accommodation = accommodationEditText.getText().toString();
         String startDate = startDateEditText.getText().toString();
         String endDate = endDateEditText.getText().toString();
 
+        // Validate the dates
+        if (!isDateValid(startDate, endDate)) {
+            Toast.makeText(this, "Start date cannot be after the end date", Toast.LENGTH_SHORT).show();
+            return; // Stop execution if validation fails
+        }
+
+        // Create updated Vacation entity
         Vacation updatedVacation = new Vacation(vacationId, title, startDate, endDate, accommodation);
 
+        // Update in the database
         repository.update(updatedVacation);
-        finish();  // Go back to the vacation list
+        finish(); // Go back to the vacation list
+    }
+
+    // Method to validate that the start date is not after the end date
+    private boolean isDateValid(String startDateStr, String endDateStr) {
+        try {
+            Date startDate = dateFormat.parse(startDateStr);
+            Date endDate = dateFormat.parse(endDateStr);
+            return !startDate.after(endDate); // Return false if start date is after end date
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 }
