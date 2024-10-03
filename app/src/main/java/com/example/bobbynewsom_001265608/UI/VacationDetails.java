@@ -1,11 +1,15 @@
 package com.example.bobbynewsom_001265608.UI;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.Switch;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,6 +38,8 @@ public class VacationDetails extends AppCompatActivity {
     private EditText accommodationEditText;
     private Button saveButton;
     private Button deleteButton;
+    private Switch startAlertSwitch;
+    private Switch endAlertSwitch;
 
     private Repository repository;
     private boolean isEditMode = false;
@@ -50,20 +56,22 @@ public class VacationDetails extends AppCompatActivity {
         // Initialize Repository
         repository = new Repository(getApplication());
 
-        // Initialize EditTexts and Buttons
+        // Initialize EditTexts, Switches, and Buttons
         titleEditText = findViewById(R.id.editTextVacationTitle);
         accommodationEditText = findViewById(R.id.editTextAccommodation);
         startDateEditText = findViewById(R.id.editTextStartDate);
         endDateEditText = findViewById(R.id.editTextEndDate);
         saveButton = findViewById(R.id.saveButton);
         deleteButton = findViewById(R.id.deleteButton);
+        startAlertSwitch = findViewById(R.id.switchStartDateAlert);
+        endAlertSwitch = findViewById(R.id.switchEndDateAlert);
 
         // Check if editing or creating new vacation
         Intent intent = getIntent();
         if (intent.hasExtra("vacationId")) {
             isEditMode = true;
             vacationId = intent.getIntExtra("vacationId", -1);
-            prepopulateFields(intent);
+            prepopulateFields(vacationId);  // Load data from database
 
             // Show Delete Button for edit mode
             deleteButton.setVisibility(View.VISIBLE);
@@ -90,6 +98,7 @@ public class VacationDetails extends AppCompatActivity {
             }
         });
 
+
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addVacationButton), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -99,11 +108,23 @@ public class VacationDetails extends AppCompatActivity {
     }
 
     // Prepopulate fields if in edit mode
-    private void prepopulateFields(Intent intent) {
-        titleEditText.setText(intent.getStringExtra("title"));
-        accommodationEditText.setText(intent.getStringExtra("accommodation"));
-        startDateEditText.setText(intent.getStringExtra("startDate"));
-        endDateEditText.setText(intent.getStringExtra("endDate"));
+    private void prepopulateFields(int vacationId) {
+        executor.execute(() -> {
+            Vacation vacation = repository.getVacationById(vacationId);  // Fetch from database
+
+            runOnUiThread(() -> {
+                if (vacation != null) {
+                    titleEditText.setText(vacation.getTitle());
+                    accommodationEditText.setText(vacation.getAccommodation());
+                    startDateEditText.setText(vacation.getStartDate());
+                    endDateEditText.setText(vacation.getEndDate());
+
+                    // Set switch states
+                    startAlertSwitch.setChecked(vacation.isStartAlertEnabled());
+                    endAlertSwitch.setChecked(vacation.isEndAlertEnabled());
+                }
+            });
+        });
     }
 
     // Show a confirmation dialog before deleting
@@ -165,12 +186,14 @@ public class VacationDetails extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    // Save a new vacation with date validation
+    // Save a new vacation with date validation and switch states
     private void saveNewVacation() {
         String title = titleEditText.getText().toString();
         String accommodation = accommodationEditText.getText().toString();
         String startDate = startDateEditText.getText().toString();
         String endDate = endDateEditText.getText().toString();
+        boolean startAlertEnabled = startAlertSwitch.isChecked();
+        boolean endAlertEnabled = endAlertSwitch.isChecked();
 
         // Validate the dates
         if (!isDateValid(startDate, endDate)) {
@@ -179,19 +202,30 @@ public class VacationDetails extends AppCompatActivity {
         }
 
         // Create new Vacation entity
-        Vacation newVacation = new Vacation(0, title, startDate, endDate, accommodation);
+        Vacation newVacation = new Vacation(0, title, startDate, endDate, accommodation, startAlertEnabled, endAlertEnabled);
 
         // Insert into database
         repository.insert(newVacation);
+
+        // Set up notifications for start and end date if switches are enabled
+        if (startAlertEnabled) {
+            scheduleNotification(title, startDate, "Vacation Start Alert", "start action");
+        }
+        if (endAlertEnabled) {
+            scheduleNotification(title, endDate, "Vacation End Alert", "end action");
+        }
+
         finish(); // Go back to the vacation list
     }
 
-    // Update an existing vacation with date validation
+    // Update an existing vacation with date validation and switch states
     private void updateVacation() {
         String title = titleEditText.getText().toString();
         String accommodation = accommodationEditText.getText().toString();
         String startDate = startDateEditText.getText().toString();
         String endDate = endDateEditText.getText().toString();
+        boolean startAlertEnabled = startAlertSwitch.isChecked();
+        boolean endAlertEnabled = endAlertSwitch.isChecked();
 
         // Validate the dates
         if (!isDateValid(startDate, endDate)) {
@@ -200,11 +234,48 @@ public class VacationDetails extends AppCompatActivity {
         }
 
         // Create updated Vacation entity
-        Vacation updatedVacation = new Vacation(vacationId, title, startDate, endDate, accommodation);
+        Vacation updatedVacation = new Vacation(vacationId, title, startDate, endDate, accommodation, startAlertEnabled, endAlertEnabled);
 
         // Update in the database
         repository.update(updatedVacation);
+
+        // Set up notifications for start and end date if switches are enabled
+        if (startAlertEnabled) {
+            scheduleNotification(title, startDate, "Vacation Start Alert", "start action");
+        }
+        if (endAlertEnabled) {
+            scheduleNotification(title, endDate, "Vacation End Alert", "end action");
+
+        }
+
         finish(); // Go back to the vacation list
+    }
+
+    // Method to schedule a notification
+    private void scheduleNotification(String title, String dateString, String notificationTitle, String action) {
+        try {
+            Date date = dateFormat.parse(dateString);
+            long triggerTime = date.getTime();
+
+            // Create an intent for the BroadcastReceiver
+            Intent intent = new Intent(this, MyReceiver.class);
+            intent.setAction(action);
+            intent.putExtra("start key", notificationTitle);
+
+            // Create a PendingIntent
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    (int) System.currentTimeMillis(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            // Set up the alarm manager to trigger at the specified time
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     // Method to validate that the start date is not after the end date
