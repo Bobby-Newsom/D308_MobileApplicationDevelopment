@@ -4,6 +4,8 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -65,6 +67,11 @@ public class VacationDetails extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         startAlertSwitch = findViewById(R.id.switchStartDateAlert);
         endAlertSwitch = findViewById(R.id.switchEndDateAlert);
+
+        //share button support
+        Button shareButton = findViewById(R.id.shareButton);
+        shareButton.setOnClickListener(v -> shareVacationDetails());
+
 
         // Check if editing or creating new vacation
         Intent intent = getIntent();
@@ -250,6 +257,44 @@ public class VacationDetails extends AppCompatActivity {
 
         finish(); // Go back to the vacation list
     }
+
+    //Method to format vacation details into a string for "Share" support
+    private String getVacationDetails() {
+        String title = titleEditText.getText().toString();
+        String accommodation = accommodationEditText.getText().toString();
+        String startDate = startDateEditText.getText().toString();
+        String endDate = endDateEditText.getText().toString();
+        boolean startAlertEnabled = startAlertSwitch.isChecked();
+        boolean endAlertEnabled = endAlertSwitch.isChecked();
+
+        return "Vacation Title: " + title + "\n" +
+                "Accommodation: " + accommodation + "\n" +
+                "Start Date: " + startDate + (startAlertEnabled ? " (Alert Enabled)" : "") + "\n" +
+                "End Date: " + endDate + (endAlertEnabled ? " (Alert Enabled)" : "");
+    }
+
+    //Method to give options for sharing vacations
+    private void shareVacationDetails() {
+        String vacationDetails = getVacationDetails();
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Vacation Details");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, vacationDetails);
+
+        // Show options to the user for sharing (email, SMS, etc.)
+        startActivity(Intent.createChooser(shareIntent, "Share Vacation Details via"));
+    }
+
+    //Method copy vacation details to clipboard
+    private void copyToClipboard() {
+        String vacationDetails = getVacationDetails();
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Vacation Details", vacationDetails);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(this, "Vacation details copied to clipboard", Toast.LENGTH_SHORT).show();
+    }
+
 
     // Method to schedule a notification
     private void scheduleNotification(String title, String dateString, String notificationTitle, String action) {
