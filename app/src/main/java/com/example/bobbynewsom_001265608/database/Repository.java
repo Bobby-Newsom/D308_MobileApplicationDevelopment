@@ -7,6 +7,7 @@ import com.example.bobbynewsom_001265608.dao.VacationDAO;
 import com.example.bobbynewsom_001265608.entities.Excursion;
 import com.example.bobbynewsom_001265608.entities.Vacation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,7 +50,8 @@ public class Repository {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }return mAllExcursions;
+        }
+        return mAllExcursions;
     }
 
     public void insert(Vacation vacation) {
@@ -158,4 +160,44 @@ public class Repository {
     public int countExcursionsByVacationId(int vacationId) {
         return mExcursionDAO.countExcursionsByVacationId(vacationId);
     }
+
+    public Excursion getExcursionById(int excursionId) {
+        final Excursion[] excursion = new Excursion[1];
+        databaseExecutor.execute(() -> {
+            excursion[0] = mExcursionDAO.getExcursionById(excursionId); // Query the DAO directly
+        });
+        try {
+            Thread.sleep(1000);  // Ensure that the task is complete before returning
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return excursion[0];
+    }
+
+    public void deleteExcursionById(int excursionId) {
+        databaseExecutor.execute(() -> {
+            mExcursionDAO.deleteExcursionById(excursionId);
+        });
+        try {
+            Thread.sleep(1000); // wait for the task to complete
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Excursion> getExcursionsForVacation(int vacationId) {
+        List<Excursion> excursions = new ArrayList<>();
+        databaseExecutor.execute(() -> {
+            excursions.addAll(mExcursionDAO.getAssociatedExcursions(vacationId));
+        });
+        try {
+            Thread.sleep(1000); // Adjust timing as needed
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return excursions;
+    }
+
+
 }
+

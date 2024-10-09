@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Switch;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,15 +23,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bobbynewsom_001265608.R;
 import com.example.bobbynewsom_001265608.database.Repository;
+import com.example.bobbynewsom_001265608.entities.Excursion;
 import com.example.bobbynewsom_001265608.entities.Vacation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -42,6 +49,10 @@ public class VacationDetails extends AppCompatActivity {
     private Button deleteButton;
     private Switch startAlertSwitch;
     private Switch endAlertSwitch;
+
+    // Excursion RecyclerView
+    private RecyclerView excursionRecyclerView;
+    private ExcursionAdapter excursionAdapter;
 
     private Repository repository;
     private boolean isEditMode = false;
@@ -68,28 +79,22 @@ public class VacationDetails extends AppCompatActivity {
         startAlertSwitch = findViewById(R.id.switchStartDateAlert);
         endAlertSwitch = findViewById(R.id.switchEndDateAlert);
 
-        //share button support
+        // Initialize RecyclerView for Excursions
+        excursionRecyclerView = findViewById(R.id.excursionRecyclerView);
+        excursionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        excursionAdapter = new ExcursionAdapter();
+        excursionRecyclerView.setAdapter(excursionAdapter);
+
+        // Share button support
         Button shareButton = findViewById(R.id.shareButton);
         shareButton.setOnClickListener(v -> shareVacationDetails());
 
-
-        // Check if editing or creating new vacation
+        // Check if editing or creating a new vacation
         Intent intent = getIntent();
         if (intent.hasExtra("vacationId")) {
             isEditMode = true;
             vacationId = intent.getIntExtra("vacationId", -1);
             prepopulateFields(vacationId);  // Load data from database
-
-            // Show Delete Button for edit mode
-            deleteButton.setVisibility(View.VISIBLE);
-            deleteButton.setText("Delete");
-
-            deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
-        } else {
-            // New vacation mode, show the delete button as "Cancel"
-            deleteButton.setVisibility(View.VISIBLE);
-            deleteButton.setText("Cancel");
-            deleteButton.setOnClickListener(v -> finish());  // Simply cancel and close activity
         }
 
         // Set onClickListeners for date selection
@@ -105,6 +110,15 @@ public class VacationDetails extends AppCompatActivity {
             }
         });
 
+        // Load associated excursions
+        loadExcursions(vacationId);
+
+        // Set the RecyclerView item click listener for editing an excursion
+        excursionAdapter.setOnItemClickListener(excursion -> {
+            Intent excursionIntent = new Intent(VacationDetails.this, ExcursionDetails.class);
+            excursionIntent.putExtra("excursionId", excursion.getExcursionId());
+            startActivity(excursionIntent);
+        });
 
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addVacationButton), (v, insets) -> {
@@ -114,7 +128,42 @@ public class VacationDetails extends AppCompatActivity {
         });
     }
 
-    // Prepopulate fields if in edit mode
+    // Load excursions associated with the current vacation
+    private void loadExcursions(int vacationId) {
+        executor.execute(() -> {
+            List<Excursion> excursions = repository.getExcursionsForVacation(vacationId);
+            runOnUiThread(() -> excursionAdapter.setExcursions(excursions));
+        });
+    }
+
+    // Add options menu for adding excursions
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_vacation_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_excursion:
+                // Open ExcursionDetails to add a new excursion
+                Intent intent = new Intent(this, ExcursionDetails.class);
+                intent.putExtra("vacationId", vacationId); // Pass vacation ID
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+
+
+
+// Prepopulate fields if in edit mode
     private void prepopulateFields(int vacationId) {
         executor.execute(() -> {
             Vacation vacation = repository.getVacationById(vacationId);  // Fetch from database

@@ -33,4 +33,13 @@ public interface ExcursionDAO {
 
     @Query("SELECT COUNT(*) FROM excursion_table WHERE vacation_id = :vacationId")
     int countExcursionsByVacationId(int vacationId);
+
+    //query for a single excursion by id
+    @Query("SELECT * FROM excursion_table WHERE excursionId = :excursionId LIMIT 1")
+    Excursion getExcursionById(int excursionId);
+
+    //query for deleting a single excursion by id
+    @Query("DELETE FROM excursion_table WHERE excursionId = :excursionId")
+    void deleteExcursionById(int excursionId);
+
 }

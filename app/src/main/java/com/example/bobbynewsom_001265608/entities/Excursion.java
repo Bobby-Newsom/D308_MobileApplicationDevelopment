@@ -18,11 +18,15 @@ public class Excursion {
     @ColumnInfo(name = "vacation_id")
     private int vacationId;
 
-    public Excursion(int excursionId, String title, String date, int vacationId) {
+    @ColumnInfo(name = "alert_enabled") // alert support for excursions
+    private boolean alertEnabled;
+
+    public Excursion(int excursionId, String title, String date, int vacationId, boolean alertEnabled) {
         this.excursionId = excursionId;
         this.title = title;
         this.date = date;
         this.vacationId = vacationId;
+        this.alertEnabled = alertEnabled; // Set alertEnabled in constructor
     }
 
     public int getExcursionId() {
@@ -55,5 +59,13 @@ public class Excursion {
 
     public void setVacationId(int vacationId) {
         this.vacationId = vacationId;
+    }
+
+    public boolean isAlertEnabled() {
+        return alertEnabled; // Getter for alertEnabled
+    }
+
+    public void setAlertEnabled(boolean alertEnabled) {
+        this.alertEnabled = alertEnabled; // Setter for alertEnabled
     }
 }

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/excursionSave"
-        android:title="@string/save_excursion"/>
+        android:id="@+id/copy_to_clipboard"
+        android:title="Copy to Clipboard"
+        android:icon="@drawable/ic_copy"
+        app:showAsAction="always" />
+
     <item
-        android:id="@+id/excursionDelete"
-        android:title="@string/delete_excursion"/>
-    <item
-        android:id="@+id/excursionShare"
-        android:title="@string/share_excursion"/>
-    <item
-        android:id="@+id/vacationStartAlert"
-        android:title="@string/vacation_start_alert"/>
-    <item
-        android:id="@+id/vacationEndAlert"
-        android:title="@string/vacation_end_alert"/>
+        android:id="@+id/share_excursion"
+        android:title="Share Excursion"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="always" />
+
 </menu>
