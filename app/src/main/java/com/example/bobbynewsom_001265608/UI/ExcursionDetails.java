@@ -243,16 +243,17 @@ public class ExcursionDetails extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.copy_to_clipboard:
-                copyToClipboard();
-                return true;
-            case R.id.share_excursion:
-                shareExcursionDetails();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+
+        if (id == R.id.copy_to_clipboard) {
+            copyToClipboard();
+        } else if (id == R.id.share_excursion) {
+            shareExcursionDetails();
+        } else {
+            return super.onOptionsItemSelected(item);
         }
+
+        return true;
     }
 
     // Method to get excursion details in a formatted string

@@ -132,7 +132,11 @@ public class VacationDetails extends AppCompatActivity {
     private void loadExcursions(int vacationId) {
         executor.execute(() -> {
             List<Excursion> excursions = repository.getExcursionsForVacation(vacationId);
-            runOnUiThread(() -> excursionAdapter.setExcursions(excursions));
+            runOnUiThread(() -> {
+                // Update the RecyclerView adapter with the new list
+                excursionAdapter.setExcursions(excursions);
+                excursionAdapter.notifyDataSetChanged(); // Ensure the UI reflects the updated data
+            });
         });
     }
 
@@ -144,18 +148,16 @@ public class VacationDetails extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_excursion:
-                // Open ExcursionDetails to add a new excursion
-                Intent intent = new Intent(this, ExcursionDetails.class);
-                intent.putExtra("vacationId", vacationId); // Pass vacation ID
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.add_excursion) {
+            Intent intent = new Intent(this, ExcursionDetails.class);
+            intent.putExtra("vacationId", vacationId); // Pass the vacation ID
+            startActivity(intent);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -163,7 +165,8 @@ public class VacationDetails extends AppCompatActivity {
 
 
 
-// Prepopulate fields if in edit mode
+
+    // Prepopulate fields if in edit mode
     private void prepopulateFields(int vacationId) {
         executor.execute(() -> {
             Vacation vacation = repository.getVacationById(vacationId);  // Fetch from database
@@ -384,4 +387,13 @@ public class VacationDetails extends AppCompatActivity {
             return false;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload the excursions whenever the user comes back to the VacationDetails activity
+        loadExcursions(vacationId); // refresh the RecyclerView
+    }
+
+
 }
