@@ -5,16 +5,6 @@
         android:id="@+id/add_excursion"
         android:title="Add Excursion"
         android:icon="@drawable/add"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/copy_to_clipboard"
-        android:title="Copy to Clipboard"
-        android:icon="@drawable/ic_copy"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/share_excursion"
-        android:title="Share Excursion"
-        android:icon="@drawable/ic_share"
-        app:showAsAction="always" />
 </menu>
