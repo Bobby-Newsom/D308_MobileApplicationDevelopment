@@ -9,6 +9,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Switch;
@@ -269,11 +270,12 @@ public class VacationDetails extends AppCompatActivity {
 
         // Set up notifications for start and end date if switches are enabled
         if (startAlertEnabled) {
-            scheduleNotification(title, startDate, "Vacation Start Alert", "start action");
+            scheduleNotification(title, startDate, "Vacation Starting", "start_action");
         }
         if (endAlertEnabled) {
-            scheduleNotification(title, endDate, "Vacation End Alert", "end action");
+            scheduleNotification(title, endDate, "Vacation Ending", "end_action");
         }
+
 
         finish(); // Go back to the vacation list
     }
@@ -302,12 +304,12 @@ public class VacationDetails extends AppCompatActivity {
 
         // Set up notifications for start and end date if switches are enabled
         if (startAlertEnabled) {
-            scheduleNotification(title, startDate, "Vacation Start Alert", "start action");
+            scheduleNotification(title, startDate, "Vacation Starting", "start_action");
         }
         if (endAlertEnabled) {
-            scheduleNotification(title, endDate, "Vacation End Alert", "end action");
-
+            scheduleNotification(title, endDate, "Vacation Ending", "end_action");
         }
+
 
         finish(); // Go back to the vacation list
     }
@@ -350,7 +352,8 @@ public class VacationDetails extends AppCompatActivity {
     }
 
 
-    // Method to schedule a notification
+    // Method to schedule a notification with the vacation/excursion title included along with debugging
+    // Method to schedule a notification with the vacation/excursion title included
     private void scheduleNotification(String title, String dateString, String notificationTitle, String action) {
         try {
             Date date = dateFormat.parse(dateString);
@@ -359,23 +362,37 @@ public class VacationDetails extends AppCompatActivity {
             // Create an intent for the BroadcastReceiver
             Intent intent = new Intent(this, MyReceiver.class);
             intent.setAction(action);
-            intent.putExtra("start key", notificationTitle);
+
+            // Include the alert message with title
+            String alertMessage = notificationTitle + ": " + title;
+            intent.putExtra("alert_message", alertMessage);
+
+            // Log the message for debugging
+            Log.d("VacationDetails", "Scheduling Notification with message: " + alertMessage);
+
+            // Use a unique request code for each alert based on time and action
+            int requestCode = (int) System.currentTimeMillis();
 
             // Create a PendingIntent
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     this,
-                    (int) System.currentTimeMillis(),
+                    requestCode,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
 
-            // Set up the alarm manager to trigger at the specified time
+            // Set the alarm manager to trigger the notification at the appropriate time
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
+
+
+
 
     //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
     // Method to validate that the start date is not after the end date
