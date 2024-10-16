@@ -353,7 +353,7 @@ public class VacationDetails extends AppCompatActivity {
 
 
     // Method to schedule a notification with the vacation/excursion title included along with debugging
-    // Method to schedule a notification with the vacation/excursion title included
+    // Method to schedule vacation notifications with specific titles
     private void scheduleNotification(String title, String dateString, String notificationTitle, String action) {
         try {
             Date date = dateFormat.parse(dateString);
@@ -363,32 +363,26 @@ public class VacationDetails extends AppCompatActivity {
             Intent intent = new Intent(this, MyReceiver.class);
             intent.setAction(action);
 
-            // Include the alert message with title
-            String alertMessage = notificationTitle + ": " + title;
-            intent.putExtra("alert_message", alertMessage);
+            // Pass the correct title and message to the receiver
+            intent.putExtra("alert_message", notificationTitle + ": " + title);
+            intent.putExtra("alert_type", "vacation");  // Add type identifier
 
-            // Log the message for debugging
-            Log.d("VacationDetails", "Scheduling Notification with message: " + alertMessage);
-
-            // Use a unique request code for each alert based on time and action
-            int requestCode = (int) System.currentTimeMillis();
-
-            // Create a PendingIntent
+            // Create a unique PendingIntent with a different requestCode for vacations
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     this,
-                    requestCode,
+                    (int) (System.currentTimeMillis() / 1000),  // Ensure uniqueness
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
 
-            // Set the alarm manager to trigger the notification at the appropriate time
+            // Schedule the alarm to trigger the notification
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
 
 
 

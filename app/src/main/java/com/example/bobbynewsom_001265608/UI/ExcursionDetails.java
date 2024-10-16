@@ -215,30 +215,28 @@ public class ExcursionDetails extends AppCompatActivity {
 
             // Create an intent for the BroadcastReceiver
             Intent intent = new Intent(this, MyReceiver.class);
-            intent.setAction("excursion_action");
+            intent.setAction("excursion action");
 
-            // Properly set the alert message with the expected key
-            String alertMessage = notificationTitle + ": " + title;
-            intent.putExtra("alert_message", alertMessage);
+            // Pass the correct title and message to the receiver
+            intent.putExtra("alert_message", notificationTitle + ": " + title);
+            intent.putExtra("alert_type", "excursion");  // Add type identifier
 
-            // Log the message for debugging purposes
-            Log.d("ExcursionDetails", "Scheduling Notification with message: " + alertMessage);
-
-            // Create a PendingIntent
+            // Create a unique PendingIntent with a different requestCode for excursions
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     this,
-                    (int) System.currentTimeMillis(),
+                    (int) (System.currentTimeMillis() / 1000),  // Ensure uniqueness
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
 
-            // Set the alarm manager to trigger the notification
+            // Schedule the alarm to trigger the notification
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
 
 
     // Add options menu for copying or sharing excursion details

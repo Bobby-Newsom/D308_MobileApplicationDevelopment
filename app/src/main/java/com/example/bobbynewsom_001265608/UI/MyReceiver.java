@@ -19,22 +19,26 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Retrieve the alert message from the intent
+        // Retrieve the alert message and type from the intent
         String alertMessage = intent.getStringExtra("alert_message");
+        String alertType = intent.getStringExtra("alert_type");  // Check type of alert
 
-        // If the message is null or empty, provide a fallback message
-        if (alertMessage == null || alertMessage.isEmpty()) {
-            alertMessage = "Alert triggered, but no message available.";
+        // Determine the notification title based on the type of alert
+        String notificationTitle = "Notification Alert";
+        if ("vacation".equals(alertType)) {
+            notificationTitle = "Vacation Alert";
+        } else if ("excursion".equals(alertType)) {
+            notificationTitle = "Excursion Alert";
         }
 
-        // Show the toast with the alert message
+        // Show a toast with the alert message
         Toast.makeText(context, alertMessage, Toast.LENGTH_LONG).show();
 
         // Create a notification channel and build the notification
         createNotificationChannel(context);
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_dialog_info) // Ensure you have a valid icon
-                .setContentTitle("Excursion Alert")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(notificationTitle)
                 .setContentText(alertMessage)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
@@ -44,6 +48,7 @@ public class MyReceiver extends BroadcastReceiver {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(notificationID++, notification);
     }
+
 
 
     // Create a notification channel for Android O and above
