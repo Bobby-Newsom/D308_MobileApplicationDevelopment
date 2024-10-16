@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bobbynewsom_001265608.R;
 import com.example.bobbynewsom_001265608.database.Repository;
 import com.example.bobbynewsom_001265608.entities.Excursion;
+import com.example.bobbynewsom_001265608.entities.Vacation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,9 @@ public class ExcursionDetails extends AppCompatActivity {
     private int vacationId = -1;
     private int excursionId = -1;
 
+    private String vacationStartDate;
+    private String vacationEndDate;
+
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -54,7 +58,7 @@ public class ExcursionDetails extends AppCompatActivity {
         // Initialize Repository
         repository = new Repository(getApplication());
 
-        // Task Requirement B.5.A  "Display a detailed view of the excursion, including title, and date."
+        // Task Requirement B.5.A "Display a detailed view of the excursion, including title, and date."
         // Initialize EditTexts, Switch, and Buttons
         titleEditText = findViewById(R.id.editTextExcursionTitle);
         dateEditText = findViewById(R.id.editTextExcursionDate);
@@ -77,6 +81,7 @@ public class ExcursionDetails extends AppCompatActivity {
             deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
         } else if (intent.hasExtra("vacationId")) {
             vacationId = intent.getIntExtra("vacationId", -1);
+            fetchVacationDates(vacationId);  // Load vacation dates for validation
             deleteButton.setVisibility(View.GONE);
         }
 
@@ -90,7 +95,18 @@ public class ExcursionDetails extends AppCompatActivity {
         });
     }
 
-    // Task Requirement B.5.A  "Display a detailed view of the excursion, including title, and date."
+    // Fetch vacation start and end dates for validation
+    private void fetchVacationDates(int vacationId) {
+        executor.execute(() -> {
+            Vacation vacation = repository.getVacationById(vacationId);
+            if (vacation != null) {
+                vacationStartDate = vacation.getStartDate();
+                vacationEndDate = vacation.getEndDate();
+            }
+        });
+    }
+
+    // Task Requirement B.5.A "Display a detailed view of the excursion, including title, and date."
     // Prepopulate fields if in edit mode ensures that the excursion title and date are fetched properly from the database
     private void prepopulateFields(int excursionId) {
         executor.execute(() -> {
@@ -101,12 +117,13 @@ public class ExcursionDetails extends AppCompatActivity {
                     dateEditText.setText(excursion.getDate());
                     alertSwitch.setChecked(excursion.isAlertEnabled());
                     vacationId = excursion.getVacationId();
+                    fetchVacationDates(vacationId);  // Load vacation dates for validation
                 }
             });
         });
     }
 
-    // Task Requirement B.5.C  "Include validation that the input date is formatted correctly"
+    // Task Requirement B.5.C "Include validation that the input date is formatted correctly"
     // using a datepicker to select the excursion date helps to ensure dates are formatted correctly
     // Show a DatePicker dialog for selecting the excursion date
     private void showDatePickerDialog() {
@@ -125,16 +142,17 @@ public class ExcursionDetails extends AppCompatActivity {
         );
         datePickerDialog.show();
     }
-    // Task Requirement B.5.B & C  "Enter, Edit, and Delete Excursion information"   &  "Include Validation that the input dates are formatted correctly"
-    // Save a new excursion
+
+    // Task Requirement B.5.B & C "Enter, Edit, and Delete Excursion information" & "Include Validation that the input dates are formatted correctly"
+    // Save a new excursion with validation
     private void saveNewExcursion() {
         String title = titleEditText.getText().toString();
         String date = dateEditText.getText().toString();
         boolean alertEnabled = alertSwitch.isChecked();
 
         // Validate the date input
-        if (!isDateValid(date)) {
-            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
+        if (!isDateValid(date) || !isExcursionDateValid(date)) {
+            Toast.makeText(this, "Excursion date must be within the vacation dates", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -152,15 +170,15 @@ public class ExcursionDetails extends AppCompatActivity {
         finish(); // Go back to the previous activity
     }
 
-    // Update an existing excursion
+    // Update an existing excursion with validation
     private void updateExcursion() {
         String title = titleEditText.getText().toString();
         String date = dateEditText.getText().toString();
         boolean alertEnabled = alertSwitch.isChecked();
 
         // Validate the date input
-        if (!isDateValid(date)) {
-            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
+        if (!isDateValid(date) || !isExcursionDateValid(date)) {
+            Toast.makeText(this, "Excursion date must be within the vacation dates", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -211,6 +229,21 @@ public class ExcursionDetails extends AppCompatActivity {
         }
     }
 
+    // Validate that the excursion date falls within the vacation date range
+    private boolean isExcursionDateValid(String excursionDateStr) {
+        try {
+            Date excursionDate = dateFormat.parse(excursionDateStr);
+            Date startDate = dateFormat.parse(vacationStartDate);
+            Date endDate = dateFormat.parse(vacationEndDate);
+
+            return !excursionDate.before(startDate) && !excursionDate.after(endDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
     // Schedule a notification for the excursion date with the correct alert message
     private void scheduleNotification(String title, String dateString, String notificationTitle) {
         try {
@@ -240,8 +273,6 @@ public class ExcursionDetails extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
 
     // Add options menu for copying or sharing excursion details
     @Override
