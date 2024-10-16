@@ -128,10 +128,13 @@ public class VacationDetails extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Delete button logic
+        deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 
     //Task Requirement B.3.G. : Display a list of excursions associated with each vacation
-    // loadLoad excursions associated with the current vacation
+    // Load excursions associated with the current vacation
     private void loadExcursions(int vacationId) {
         executor.execute(() -> {
             List<Excursion> excursions = repository.getExcursionsForVacation(vacationId);
@@ -162,12 +165,6 @@ public class VacationDetails extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
-
-
 
     // Prepopulate fields if in edit mode
     private void prepopulateFields(int vacationId) {
@@ -248,7 +245,7 @@ public class VacationDetails extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
+    //Task Requirement B.3.D. : Include validation that the vacation start date is not after the end date
     // Save a new vacation with date validation and switch states
     private void saveNewVacation() {
         String title = titleEditText.getText().toString();
@@ -278,10 +275,9 @@ public class VacationDetails extends AppCompatActivity {
             scheduleNotification(title, endDate, "Vacation Ending", "end_action");
         }
 
-
         finish(); // Go back to the vacation list
     }
-    //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
+
     // Update an existing vacation with date validation and switch states
     private void updateVacation() {
         String title = titleEditText.getText().toString();
@@ -291,7 +287,6 @@ public class VacationDetails extends AppCompatActivity {
         boolean startAlertEnabled = startAlertSwitch.isChecked();
         boolean endAlertEnabled = endAlertSwitch.isChecked();
 
-        //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
         // Validate the dates
         if (!isDateValid(startDate, endDate)) {
             Toast.makeText(this, "Start date cannot be after the end date", Toast.LENGTH_SHORT).show();
@@ -312,16 +307,10 @@ public class VacationDetails extends AppCompatActivity {
             scheduleNotification(title, endDate, "Vacation Ending", "end_action");
         }
 
-
         finish(); // Go back to the vacation list
     }
-    /*Task Requirement B.3.F.
-    "Include sharing features so the user can share all the vacation details via a sharing feature
-    (either e-mail, clipboard or SMS) that automatically populates with the vacation details."
 
-    getVacationDetails() is method to format vacation details into a string for "Share" support
-     */
-    //Method to format vacation details into a string for "Share" support
+    // Method to format vacation details into a string for "Share" support
     private String getVacationDetails() {
         String title = titleEditText.getText().toString();
         String accommodation = accommodationEditText.getText().toString();
@@ -336,13 +325,7 @@ public class VacationDetails extends AppCompatActivity {
                 "End Date: " + endDate + (endAlertEnabled ? " (Alert Enabled)" : "");
     }
 
-    /*Task Requirement B.3.F.
-    "Include sharing features so the user can share all the vacation details via a sharing feature
-    (either e-mail, clipboard or SMS) that automatically populates with the vacation details."
-
-    shareVacationDetails is method to give options for sharing vacations
-     */
-
+    // Method to give options for sharing vacations
     private void shareVacationDetails() {
         String vacationDetails = getVacationDetails();
 
@@ -355,7 +338,7 @@ public class VacationDetails extends AppCompatActivity {
         startActivity(Intent.createChooser(shareIntent, "Share Vacation Details via"));
     }
 
-    //Method copy vacation details to clipboard
+    // Method to copy vacation details to clipboard
     private void copyToClipboard() {
         String vacationDetails = getVacationDetails();
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -364,9 +347,7 @@ public class VacationDetails extends AppCompatActivity {
         Toast.makeText(this, "Vacation details copied to clipboard", Toast.LENGTH_SHORT).show();
     }
 
-
     // Method to schedule a notification with the vacation/excursion title included along with debugging
-    // Method to schedule vacation notifications with specific titles
     private void scheduleNotification(String title, String dateString, String notificationTitle, String action) {
         try {
             Date date = dateFormat.parse(dateString);
@@ -396,12 +377,7 @@ public class VacationDetails extends AppCompatActivity {
         }
     }
 
-
-
-
-
-
-    //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
+    // Task Requirement B.3.D. : Include validation that the vacation start date is not after the end date
     // Method to validate that the start date is not after the end date
     private boolean isDateValid(String startDateStr, String endDateStr) {
         try {
@@ -415,7 +391,7 @@ public class VacationDetails extends AppCompatActivity {
         }
     }
 
-    //Task Requirement B.3.G. : Display a list of excursions associated with each vacation
+    // Task Requirement B.3.G. : Display a list of excursions associated with each vacation
     // Reload excursions whenever the user comes back to the VacationDetails activity
     @Override
     protected void onResume() {
@@ -424,6 +400,5 @@ public class VacationDetails extends AppCompatActivity {
         // loads excursions associated with the current vacation by its ID
         loadExcursions(vacationId); // refresh the RecyclerView
     }
-
 
 }
