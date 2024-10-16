@@ -245,6 +245,7 @@ public class VacationDetails extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
     // Save a new vacation with date validation and switch states
     private void saveNewVacation() {
         String title = titleEditText.getText().toString();
@@ -276,7 +277,7 @@ public class VacationDetails extends AppCompatActivity {
 
         finish(); // Go back to the vacation list
     }
-
+    //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
     // Update an existing vacation with date validation and switch states
     private void updateVacation() {
         String title = titleEditText.getText().toString();
@@ -286,6 +287,7 @@ public class VacationDetails extends AppCompatActivity {
         boolean startAlertEnabled = startAlertSwitch.isChecked();
         boolean endAlertEnabled = endAlertSwitch.isChecked();
 
+        //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
         // Validate the dates
         if (!isDateValid(startDate, endDate)) {
             Toast.makeText(this, "Start date cannot be after the end date", Toast.LENGTH_SHORT).show();
@@ -375,7 +377,7 @@ public class VacationDetails extends AppCompatActivity {
         }
     }
 
-
+    //Task Requirement B.3.D. :Include validation that the vacation start date is not after the end date
     // Method to validate that the start date is not after the end date
     private boolean isDateValid(String startDateStr, String endDateStr) {
         try {
