@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -206,7 +207,7 @@ public class ExcursionDetails extends AppCompatActivity {
         }
     }
 
-    // Schedule a notification for the excursion date
+    // Schedule a notification for the excursion date with the correct alert message
     private void scheduleNotification(String title, String dateString, String notificationTitle) {
         try {
             Date date = dateFormat.parse(dateString);
@@ -214,8 +215,14 @@ public class ExcursionDetails extends AppCompatActivity {
 
             // Create an intent for the BroadcastReceiver
             Intent intent = new Intent(this, MyReceiver.class);
-            intent.setAction("excursion action");
-            intent.putExtra("start key", notificationTitle);
+            intent.setAction("excursion_action");
+
+            // Properly set the alert message with the expected key
+            String alertMessage = notificationTitle + ": " + title;
+            intent.putExtra("alert_message", alertMessage);
+
+            // Log the message for debugging purposes
+            Log.d("ExcursionDetails", "Scheduling Notification with message: " + alertMessage);
 
             // Create a PendingIntent
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -225,13 +232,14 @@ public class ExcursionDetails extends AppCompatActivity {
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
 
-            // Set up the alarm manager to trigger at the specified time
+            // Set the alarm manager to trigger the notification
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
+
 
     // Add options menu for copying or sharing excursion details
     @Override
