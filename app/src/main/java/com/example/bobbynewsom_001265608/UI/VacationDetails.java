@@ -148,7 +148,7 @@ public class VacationDetails extends AppCompatActivity {
         return true;
     }
 
-
+    // Handle menu item selection for adding excursions
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.add_excursion) {

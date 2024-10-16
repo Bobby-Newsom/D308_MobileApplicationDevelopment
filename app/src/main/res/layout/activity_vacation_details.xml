@@ -13,7 +13,7 @@
         android:id="@+id/textViewVacationTitleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="50dp"
         android:text="Vacation Title"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -164,6 +164,33 @@
             android:layout_marginStart="16dp"
             android:text="Delete" />
     </LinearLayout>
+
+    <!-- Excursions Section Label -->
+    <TextView
+        android:id="@+id/labelAssociatedExcursions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Associated Excursions"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutButtons"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/excursionHintText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Use the menu in the top-right corner to add excursions."
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/labelAssociatedExcursions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
 
     <!-- RecyclerView for Excursions -->
     <androidx.recyclerview.widget.RecyclerView
