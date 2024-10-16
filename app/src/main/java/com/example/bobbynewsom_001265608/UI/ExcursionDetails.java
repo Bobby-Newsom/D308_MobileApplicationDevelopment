@@ -54,6 +54,7 @@ public class ExcursionDetails extends AppCompatActivity {
         // Initialize Repository
         repository = new Repository(getApplication());
 
+        // Task Requirement B.5.A  "Display a detailed view of the excursion, including title, and date."
         // Initialize EditTexts, Switch, and Buttons
         titleEditText = findViewById(R.id.editTextExcursionTitle);
         dateEditText = findViewById(R.id.editTextExcursionDate);
@@ -89,7 +90,8 @@ public class ExcursionDetails extends AppCompatActivity {
         });
     }
 
-    // Prepopulate fields if in edit mode
+    // Task Requirement B.5.A  "Display a detailed view of the excursion, including title, and date."
+    // Prepopulate fields if in edit mode ensures that the excursion title and date are fetched properly from the database
     private void prepopulateFields(int excursionId) {
         executor.execute(() -> {
             Excursion excursion = repository.getExcursionById(excursionId);
