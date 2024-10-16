@@ -80,7 +80,8 @@ public class VacationDetails extends AppCompatActivity {
         startAlertSwitch = findViewById(R.id.switchStartDateAlert);
         endAlertSwitch = findViewById(R.id.switchEndDateAlert);
 
-        // Initialize RecyclerView for Excursions
+        //Task Requirement B.3.G. : Display a list of excursions associated with each vacation
+        // Initialize RecyclerView on the Vacation Details/Edit page for Excursions displays a list of excursions associated with each vacation
         excursionRecyclerView = findViewById(R.id.excursionRecyclerView);
         excursionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         excursionAdapter = new ExcursionAdapter();
@@ -129,7 +130,8 @@ public class VacationDetails extends AppCompatActivity {
         });
     }
 
-    // Load excursions associated with the current vacation
+    //Task Requirement B.3.G. : Display a list of excursions associated with each vacation
+    // loadLoad excursions associated with the current vacation
     private void loadExcursions(int vacationId) {
         executor.execute(() -> {
             List<Excursion> excursions = repository.getExcursionsForVacation(vacationId);
@@ -413,10 +415,13 @@ public class VacationDetails extends AppCompatActivity {
         }
     }
 
+    //Task Requirement B.3.G. : Display a list of excursions associated with each vacation
+    // Reload excursions whenever the user comes back to the VacationDetails activity
     @Override
     protected void onResume() {
         super.onResume();
-        // Reload the excursions whenever the user comes back to the VacationDetails activity
+
+        // loads excursions associated with the current vacation by its ID
         loadExcursions(vacationId); // refresh the RecyclerView
     }
 
