@@ -96,7 +96,7 @@ public class VacationDetails extends AppCompatActivity {
             vacationId = intent.getIntExtra("vacationId", -1);
             prepopulateFields(vacationId);  // Load data from database
         }
-
+        //Task Requirement B.3.C. : Include validation that the input dates are formatted correctly
         // Set onClickListeners for date selection
         startDateEditText.setOnClickListener(v -> showDatePickerDialog(startDateEditText));
         endDateEditText.setOnClickListener(v -> showDatePickerDialog(endDateEditText));
@@ -374,6 +374,7 @@ public class VacationDetails extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
     // Method to validate that the start date is not after the end date
     private boolean isDateValid(String startDateStr, String endDateStr) {
