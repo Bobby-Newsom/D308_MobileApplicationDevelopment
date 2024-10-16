@@ -158,13 +158,25 @@ public class VacationDetails extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.add_excursion) {
-            Intent intent = new Intent(this, ExcursionDetails.class);
-            intent.putExtra("vacationId", vacationId); // Pass the vacation ID
-            startActivity(intent);
-            return true;
+            if (vacationId == -1) {
+                // If the vacation hasn't been saved yet (vacationId is -1), show an alert
+                new AlertDialog.Builder(this)
+                        .setTitle("Cannot Add Excursion")
+                        .setMessage("Please save the vacation before adding excursions.")
+                        .setPositiveButton("OK", null)
+                        .show();
+                return true;
+            } else {
+                // If the vacation is saved, proceed to add an excursion
+                Intent intent = new Intent(this, ExcursionDetails.class);
+                intent.putExtra("vacationId", vacationId); // Pass the vacation ID
+                startActivity(intent);
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     // Prepopulate fields if in edit mode
     private void prepopulateFields(int vacationId) {
