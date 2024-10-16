@@ -106,6 +106,8 @@ public class ExcursionDetails extends AppCompatActivity {
         });
     }
 
+    // Task Requirement B.5.C  "Include validation that the input date is formatted correctly"
+    // using a datepicker to select the excursion date helps to ensure dates are formatted correctly
     // Show a DatePicker dialog for selecting the excursion date
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
@@ -123,7 +125,7 @@ public class ExcursionDetails extends AppCompatActivity {
         );
         datePickerDialog.show();
     }
-
+    // Task Requirement B.5.B & C  "Enter, Edit, and Delete Excursion information"   &  "Include Validation that the input dates are formatted correctly"
     // Save a new excursion
     private void saveNewExcursion() {
         String title = titleEditText.getText().toString();
