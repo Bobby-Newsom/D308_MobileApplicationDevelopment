@@ -313,7 +313,12 @@ public class VacationDetails extends AppCompatActivity {
 
         finish(); // Go back to the vacation list
     }
+    /*Task Requirement B.3.F.
+    "Include sharing features so the user can share all the vacation details via a sharing feature
+    (either e-mail, clipboard or SMS) that automatically populates with the vacation details."
 
+    getVacationDetails() is method to format vacation details into a string for "Share" support
+     */
     //Method to format vacation details into a string for "Share" support
     private String getVacationDetails() {
         String title = titleEditText.getText().toString();
@@ -329,7 +334,13 @@ public class VacationDetails extends AppCompatActivity {
                 "End Date: " + endDate + (endAlertEnabled ? " (Alert Enabled)" : "");
     }
 
-    //Method to give options for sharing vacations
+    /*Task Requirement B.3.F.
+    "Include sharing features so the user can share all the vacation details via a sharing feature
+    (either e-mail, clipboard or SMS) that automatically populates with the vacation details."
+
+    shareVacationDetails is method to give options for sharing vacations
+     */
+
     private void shareVacationDetails() {
         String vacationDetails = getVacationDetails();
 
