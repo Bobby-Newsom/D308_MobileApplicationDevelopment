@@ -195,8 +195,8 @@
     <!-- RecyclerView for Excursions -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/excursionRecyclerView"
-        android:layout_width="380dp"
-        android:layout_height="139dp"
+        android:layout_width="359dp"
+        android:layout_height="134dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
