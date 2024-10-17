@@ -260,12 +260,18 @@ public class VacationDetails extends AppCompatActivity {
     //Task Requirement B.3.D. : Include validation that the vacation start date is not after the end date
     // Save a new vacation with date validation and switch states
     private void saveNewVacation() {
-        String title = titleEditText.getText().toString();
-        String accommodation = accommodationEditText.getText().toString();
+        String title = titleEditText.getText().toString().trim();
+        String accommodation = accommodationEditText.getText().toString().trim();
         String startDate = startDateEditText.getText().toString();
         String endDate = endDateEditText.getText().toString();
         boolean startAlertEnabled = startAlertSwitch.isChecked();
         boolean endAlertEnabled = endAlertSwitch.isChecked();
+
+        // Validate that title and accommodation are not empty
+        if (title.isEmpty() || accommodation.isEmpty()) {
+            Toast.makeText(this, "Title and Accommodation are required fields", Toast.LENGTH_SHORT).show();
+            return; // Stop execution if validation fails
+        }
 
         // Validate the dates
         if (!isDateValid(startDate, endDate)) {
@@ -290,15 +296,20 @@ public class VacationDetails extends AppCompatActivity {
         finish(); // Go back to the vacation list
     }
 
-
     // Update an existing vacation with date validation and switch states
     private void updateVacation() {
-        String title = titleEditText.getText().toString();
-        String accommodation = accommodationEditText.getText().toString();
+        String title = titleEditText.getText().toString().trim();
+        String accommodation = accommodationEditText.getText().toString().trim();
         String startDate = startDateEditText.getText().toString();
         String endDate = endDateEditText.getText().toString();
         boolean startAlertEnabled = startAlertSwitch.isChecked();
         boolean endAlertEnabled = endAlertSwitch.isChecked();
+
+        // Validate that title and accommodation are not empty
+        if (title.isEmpty() || accommodation.isEmpty()) {
+            Toast.makeText(this, "Title and Accommodation are required fields", Toast.LENGTH_SHORT).show();
+            return; // Stop execution if validation fails
+        }
 
         // Validate the vacation start and end dates
         if (!isDateValid(startDate, endDate)) {
@@ -356,6 +367,7 @@ public class VacationDetails extends AppCompatActivity {
             }
         });
     }
+
 
 
     // Method to format vacation details into a string for "Share" support
