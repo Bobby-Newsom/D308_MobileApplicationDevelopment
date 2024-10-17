@@ -290,6 +290,7 @@ public class VacationDetails extends AppCompatActivity {
         finish(); // Go back to the vacation list
     }
 
+
     // Update an existing vacation with date validation and switch states
     private void updateVacation() {
         String title = titleEditText.getText().toString();
@@ -299,28 +300,63 @@ public class VacationDetails extends AppCompatActivity {
         boolean startAlertEnabled = startAlertSwitch.isChecked();
         boolean endAlertEnabled = endAlertSwitch.isChecked();
 
-        // Validate the dates
+        // Validate the vacation start and end dates
         if (!isDateValid(startDate, endDate)) {
             Toast.makeText(this, "Start date cannot be after the end date", Toast.LENGTH_SHORT).show();
             return; // Stop execution if validation fails
         }
 
-        // Create updated Vacation entity
-        Vacation updatedVacation = new Vacation(vacationId, title, startDate, endDate, accommodation, startAlertEnabled, endAlertEnabled);
+        // Fetch associated excursions and validate their dates
+        executor.execute(() -> {
+            List<Excursion> excursions = repository.getExcursionsForVacation(vacationId);
+            boolean datesValid = true;
 
-        // Update in the database
-        repository.update(updatedVacation);
+            try {
+                Date start = dateFormat.parse(startDate);
+                Date end = dateFormat.parse(endDate);
 
-        // Set up notifications for start and end date if switches are enabled
-        if (startAlertEnabled) {
-            scheduleNotification(title, startDate, "Vacation Starting", "start_action");
-        }
-        if (endAlertEnabled) {
-            scheduleNotification(title, endDate, "Vacation Ending", "end_action");
-        }
+                // Check if any excursion date is outside the vacation date range
+                for (Excursion excursion : excursions) {
+                    Date excursionDate = dateFormat.parse(excursion.getDate());
+                    if (excursionDate.before(start) || excursionDate.after(end)) {
+                        datesValid = false;
+                        break;
+                    }
+                }
 
-        finish(); // Go back to the vacation list
+                final boolean finalDatesValid = datesValid;
+
+                runOnUiThread(() -> {
+                    if (!finalDatesValid) {
+                        // If dates are invalid, show an alert to the user
+                        new AlertDialog.Builder(this)
+                                .setTitle("Invalid Dates")
+                                .setMessage("One or more excursions have dates outside the updated vacation range. Please adjust excursion dates or modify the vacation dates accordingly.")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } else {
+                        // Proceed with updating the vacation if dates are valid
+                        Vacation updatedVacation = new Vacation(vacationId, title, startDate, endDate, accommodation, startAlertEnabled, endAlertEnabled);
+                        repository.update(updatedVacation);
+
+                        // Set up notifications for start and end date if switches are enabled
+                        if (startAlertEnabled) {
+                            scheduleNotification(title, startDate, "Vacation Starting", "start_action");
+                        }
+                        if (endAlertEnabled) {
+                            scheduleNotification(title, endDate, "Vacation Ending", "end_action");
+                        }
+
+                        finish(); // Go back to the vacation list
+                    }
+                });
+            } catch (ParseException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Error parsing dates. Please try again.", Toast.LENGTH_SHORT).show());
+            }
+        });
     }
+
 
     // Method to format vacation details into a string for "Share" support
     private String getVacationDetails() {
