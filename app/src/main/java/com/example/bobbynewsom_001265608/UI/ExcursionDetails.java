@@ -146,14 +146,20 @@ public class ExcursionDetails extends AppCompatActivity {
     // Task Requirement B.5.B & C "Enter, Edit, and Delete Excursion information" & "Include Validation that the input dates are formatted correctly"
     // Save a new excursion with validation
     private void saveNewExcursion() {
-        String title = titleEditText.getText().toString();
+        String title = titleEditText.getText().toString().trim();
         String date = dateEditText.getText().toString();
         boolean alertEnabled = alertSwitch.isChecked();
+
+        // Validate that title is not empty
+        if (title.isEmpty()) {
+            Toast.makeText(this, "Title is a required field", Toast.LENGTH_SHORT).show();
+            return; // Stop execution if validation fails
+        }
 
         // Validate the date input
         if (!isDateValid(date) || !isExcursionDateValid(date)) {
             Toast.makeText(this, "Excursion date must be within the vacation dates", Toast.LENGTH_SHORT).show();
-            return;
+            return; // Stop execution if validation fails
         }
 
         // Create a new Excursion entity
@@ -172,14 +178,20 @@ public class ExcursionDetails extends AppCompatActivity {
 
     // Update an existing excursion with validation
     private void updateExcursion() {
-        String title = titleEditText.getText().toString();
+        String title = titleEditText.getText().toString().trim();
         String date = dateEditText.getText().toString();
         boolean alertEnabled = alertSwitch.isChecked();
+
+        // Validate that title is not empty
+        if (title.isEmpty()) {
+            Toast.makeText(this, "Title is a required field", Toast.LENGTH_SHORT).show();
+            return; // Stop execution if validation fails
+        }
 
         // Validate the date input
         if (!isDateValid(date) || !isExcursionDateValid(date)) {
             Toast.makeText(this, "Excursion date must be within the vacation dates", Toast.LENGTH_SHORT).show();
-            return;
+            return; // Stop execution if validation fails
         }
 
         // Create an updated Excursion entity
@@ -195,6 +207,9 @@ public class ExcursionDetails extends AppCompatActivity {
 
         finish(); // Go back to the previous activity
     }
+
+
+
 
     // Show a confirmation dialog before deleting
     private void showDeleteConfirmationDialog() {
